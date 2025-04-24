@@ -1,22 +1,26 @@
 import { Vehicle } from './vehicle.entity';
-import { Type } from 'class-transformer';
+import { Type, Expose } from 'class-transformer';
 
 export class ParkingSlot {
+    @Expose()
+    public readonly slotNumber: number;
+    
+    @Expose()
+    @Type(() => Vehicle)
+    private _vehicle: Vehicle | null = null;
 
-    constructor(
-        public readonly slotNumber: number,
-        private _vehicle: Vehicle | null = null,
-    ) {
+    constructor(slotNumber: number, vehicle: Vehicle | null = null) {
         if (slotNumber < 0) {
             throw new Error('Slot number must be greater than or equal 0');
         }
+        this.slotNumber = slotNumber;
+        this._vehicle = vehicle;
     }
 
     public get isOccupied(): boolean {
         return this._vehicle !== null;
     }
 
-    @Type(() => Vehicle)
     public get vehicle(): Vehicle | null {
         return this._vehicle;
     }

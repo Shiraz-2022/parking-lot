@@ -8,6 +8,6 @@ export class GetAvailableSlotsUseCase {
     async execute(parkingLotId: string): Promise<ParkingSlot[] | null> {
         const raw = this.parkingLotRepository.findById(parkingLotId, true);
         const parkingLot = ParkingLotMapper.toEntity(raw);
-        return parkingLot!.getAvailableSlots();
+        return parkingLot.getAvailableSlots();
     }
 }

@@ -10,6 +10,6 @@ export class GetSlotByVehicleUseCase {
         const raw = this.parkingLotRepository.findById(request.parkingLotId, true)
         const parkingLot = ParkingLotMapper.toEntity(raw);
 
-        return parkingLot!.getSlotByRegNo(request.regNo);
+        return parkingLot.getSlotByRegNo(request.regNo);
     }
 }

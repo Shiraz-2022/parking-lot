@@ -9,14 +9,10 @@ export class AllocateParkingSlotUseCase {
 
     async execute(request: AllocateParkingSlotDto): Promise<ParkingSlot | null> {
         const raw = this.parkingLotRepository.findById(request.parkingLotId, true);
-
         const parkingLot = ParkingLotMapper.toEntity(raw);
 
         const car = new Car(request.regNo, request.color);
-
         const nextAvailableSlot = parkingLot.getAvailableSlot();
-
-        console.log("nextAvailable", nextAvailableSlot);
 
         if (nextAvailableSlot == null) return null;
 
@@ -25,8 +21,6 @@ export class AllocateParkingSlotUseCase {
         // Update the parking lot in the repository
         this.parkingLotRepository.removeFromHeap();
         this.parkingLotRepository.update(request.parkingLotId, parkingLot);
-
-        console.log("Updated heap", parkingLot.getAvailableSlots());
 
         return slot;
     }

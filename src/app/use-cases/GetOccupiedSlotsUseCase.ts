@@ -15,6 +15,6 @@ export class GetOccupiedSlotsUseCase {
 
         console.log("parkingLot", parkingLot);
 
-        return parkingLot!.getOccupiedSlots();
+        return parkingLot.getOccupiedSlots();
     }
 }

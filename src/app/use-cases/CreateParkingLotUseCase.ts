@@ -9,12 +9,7 @@ export class CreateParkingLotUseCase {
     ) {}
 
     async execute(request: CreateParkingLotDto): Promise<ParkingLot> {
-        const raw = new ParkingLot(request.capacity);
-
-        
-        const parkingLot = ParkingLotMapper.toEntity(raw);
-
-
+        const parkingLot = new ParkingLot(request.capacity);
         return this.parkingLotRepository.createParkingLot(parkingLot);
     }
 }

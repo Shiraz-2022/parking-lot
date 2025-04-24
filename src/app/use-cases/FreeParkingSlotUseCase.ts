@@ -8,7 +8,6 @@ export class FreeParkingSlotUseCase {
 
     async execute(request: FreeParkingSlotDto): Promise<ParkingSlot> {
         const raw = this.parkingLotRepository.findById(request.parkingLotId, true);
-
         const parkingLot = ParkingLotMapper.toEntity(raw);
 
         if (!request.slotNumber && !request.regNo) {
@@ -18,19 +17,22 @@ export class FreeParkingSlotUseCase {
         let slot: ParkingSlot | null = null;
 
         if (request.slotNumber) {
-            slot = parkingLot!.getSlotByNumber(request.slotNumber);
+            slot = parkingLot.getSlotByNumber(request.slotNumber);
             if (!slot) {
                 throw new Error(`Slot with number ${request.slotNumber} does not exist`);
             }
         } else if (request.regNo) {
-            slot = parkingLot!.getSlotByRegNo(request.regNo);
+            slot = parkingLot.getSlotByRegNo(request.regNo);
             if (!slot) {
                 throw new Error(`No slot found for vehicle with registration number ${request.regNo}`);
             }
         }
 
-        const freeSlot = parkingLot!.leaveBySlot(slot!);
+        console.log("slot",slot);
 
+        const freeSlot = parkingLot.leaveBySlot(slot!);
+
+        this.parkingLotRepository.update(request.parkingLotId, parkingLot);
         this.parkingLotRepository.addToHeap(freeSlot);
 
         return freeSlot;

@@ -13,7 +13,6 @@ export class ExpandParkingLotUseCase {
         }
 
         const raw = this.parkingLotRepository.findById(request.parkingLotId,true);
-
         const parkingLot = ParkingLotMapper.toEntity(raw);
 
         parkingLot.expand(request.slotsCount);

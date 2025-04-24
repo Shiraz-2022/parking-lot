@@ -2,16 +2,31 @@ import { ParkingSlot } from './parking-slot.entity';
 import { Vehicle } from './vehicle.entity';
 import type { Color } from "../enums/color.enum.ts";
 import { MinHeap } from '../shared/min-heap';
-import {Type} from "class-transformer";
+import { Type, Expose } from "class-transformer";
 
 export class ParkingLot {
-    @Type(()=> ParkingSlot)
-    private _slots: ParkingSlot[] = [];
-    private _availableSlotsHeap: MinHeap;
+    @Expose()
+    _id?: string;
 
-    constructor(private capacity: number) {
+    @Expose()
+    @Type(() => ParkingSlot)
+    private _slots: ParkingSlot[] = [];
+    
+    @Expose()
+    private _availableSlotsHeap: MinHeap;
+    
+    @Expose()
+    private capacity: number;
+
+    private _vehiclesByRegNo: Map<string, Vehicle> = new Map();
+    private _vehiclesByColor: Map<Color, Set<Vehicle>> = new Map();
+
+    constructor(capacity?: number) {
+        this.capacity = capacity || 0;
         this._availableSlotsHeap = new MinHeap();
-        this._initializeSlots(capacity);
+        if (capacity) {
+            this._initializeSlots(capacity);
+        }
     }
 
     private _initializeSlots(capacity: number) {
@@ -21,8 +36,8 @@ export class ParkingLot {
         }
     }
 
-    public getTotalSlots() {
-        return this._slots.length;
+    public getTotalSlots(): number {
+        return this.capacity;
     }
 
     public getAllSlots() {
@@ -30,12 +45,14 @@ export class ParkingLot {
     }
 
     public getSlotByNumber(slotNumber: number): ParkingSlot | null {
-        const slot = this._slots[slotNumber];
-        return slot ?? null;
+        if (slotNumber < 1 || slotNumber > this.capacity) {
+            return null;
+        }
+        return this._slots[slotNumber - 1] || null;
     }
 
     public expand(additionalSlots: number) {
-        this.capacity = this.capacity+additionalSlots;
+        this.capacity = this.capacity + additionalSlots;
         const currentSize = this._slots.length;
         for (let i = 1; i <= additionalSlots; i++) {
             const newSlotNumber = currentSize + i;
@@ -44,35 +61,52 @@ export class ParkingLot {
         }
     }
 
-    public park(vehicle: Vehicle, nextAvailableSlot): ParkingSlot | null {
+    public park(vehicle: Vehicle, nextAvailableSlot: ParkingSlot): ParkingSlot | null {
         if (!vehicle.registrationNumber || !vehicle.color) {
             throw new Error("Vehicle registration number and color are required");
         }
 
         nextAvailableSlot.park(vehicle);
-
-        this._slots[nextAvailableSlot.slotNumber] = nextAvailableSlot;
-
-        // Remove the slot number from the heap
+        this._slots[nextAvailableSlot.slotNumber - 1] = nextAvailableSlot;
         this._availableSlotsHeap.extractMin();
 
-        console.log("heap", this._availableSlotsHeap);
+        // Update vehicle maps
+        this.updateVehicleMaps(vehicle, nextAvailableSlot);
 
         return nextAvailableSlot;
     }
 
+    public updateVehicleMaps(vehicle: Vehicle, slot: ParkingSlot): void {
+        // Update registration number map
+        this._vehiclesByRegNo.set(vehicle.registrationNumber, vehicle);
+
+        // Update color map
+        if (!this._vehiclesByColor.has(vehicle.color)) {
+            this._vehiclesByColor.set(vehicle.color, new Set());
+        }
+        this._vehiclesByColor.get(vehicle.color)!.add(vehicle);
+    }
+
     public leaveBySlot(slot: ParkingSlot): ParkingSlot {
-        const parkingSlot = this._slots[slot.slotNumber];
+        const parkingSlot = this._slots[slot.slotNumber - 1];
         if (!parkingSlot || !parkingSlot.isOccupied) {
             throw new Error("Parking slot is already empty");
         }
 
+        const vehicle = parkingSlot.vehicle!;
         parkingSlot.clear();
-
-        this._slots[parkingSlot.slotNumber] = parkingSlot;
-
-        // Add the slot number back to the heap
+        this._slots[parkingSlot.slotNumber - 1] = parkingSlot;
         this._availableSlotsHeap.insert(parkingSlot.slotNumber);
+
+        // Update vehicle maps
+        this._vehiclesByRegNo.delete(vehicle.registrationNumber);
+        const colorVehicles = this._vehiclesByColor.get(vehicle.color);
+        if (colorVehicles) {
+            colorVehicles.delete(vehicle);
+            if (colorVehicles.size === 0) {
+                this._vehiclesByColor.delete(vehicle.color);
+            }
+        }
 
         return parkingSlot;
     }
@@ -87,29 +121,23 @@ export class ParkingLot {
     }
 
     public getOccupiedSlots(): ParkingSlot[] {
-        console.log("Occupied Slots:", this._slots);
         return this._slots.filter(s => s.isOccupied);
     }
 
     public getSlotByRegNo(regNo: string): ParkingSlot | null {
-        return this._slots.find(s => s.vehicle?.registrationNumber === regNo) ?? null;
+        const vehicle = this._vehiclesByRegNo.get(regNo);
+        if (!vehicle) return null;
+        return this._slots.find(s => s.vehicle === vehicle) ?? null;
     }
 
     public getSlotsByColor(color: Color): ParkingSlot[] | null {
-        const slots =  this._slots.filter(s => s.vehicle?.color === color);
-
-        if(!slots || slots.length === 0) return null;
-
-        return slots;
+        const vehicles = this._vehiclesByColor.get(color);
+        if (!vehicles || vehicles.size === 0) return null;
+        return this._slots.filter(s => vehicles.has(s.vehicle!));
     }
 
     public getVehiclesByColor(color: Color): Vehicle[] | null {
-        const vehicles =  this._slots
-            .filter(s => s.vehicle?.color === color)
-            .map(s => s.vehicle!);
-
-        if(!vehicles || vehicles.length === 0) return null;
-
-        return vehicles;
+        const vehicles = this._vehiclesByColor.get(color);
+        return vehicles ? Array.from(vehicles) : null;
     }
 }

@@ -1,7 +1,8 @@
 import { Vehicle } from './vehicle.entity';
-import {Type} from "class-transformer";
+import { Expose } from "class-transformer";
 
 export class Car extends Vehicle {
+    @Expose()
     get type(): string {
         return 'car';
     }

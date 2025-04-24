@@ -1,13 +1,24 @@
 import type {Color} from "../enums/color.enum";
+import { Expose } from "class-transformer";
 
 export abstract class Vehicle {
-    constructor(
-        public readonly registrationNumber: string,
-        public readonly color: Color,
-    ) {
-        if(!registrationNumber || !color){
+    @Expose()
+    public readonly registrationNumber: string;
+    
+    @Expose()
+    public readonly color: Color;
+
+    constructor(registrationNumber?: string, color?: Color) {
+        if (registrationNumber === undefined || color === undefined) {
+            return;
+        }
+        
+        if (!registrationNumber || !color) {
             throw new Error("Vehicle registration number and color are required");
         }
+        
+        this.registrationNumber = registrationNumber;
+        this.color = color;
     }
 
     abstract get type(): string;

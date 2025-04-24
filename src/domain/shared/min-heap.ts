@@ -1,8 +1,16 @@
+import { Expose } from "class-transformer";
+
 export class MinHeap {
+    @Expose()
     private heap: number[];
 
     constructor() {
         this.heap = [];
+    }
+
+    @Expose()
+    getHeapArray(): number[] {
+        return this.heap;
     }
 
     insert(item: number): void {
