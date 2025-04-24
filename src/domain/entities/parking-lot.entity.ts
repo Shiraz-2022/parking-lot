@@ -1,3 +1,7 @@
+/**
+ * Represents a parking lot with multiple parking slots
+ * Manages vehicle parking, slot allocation and queries
+ */
 import { ParkingSlot } from './parking-slot.entity';
 import { Vehicle } from './vehicle.entity';
 import type { Color } from "../enums/color.enum.ts";
@@ -21,6 +25,9 @@ export class ParkingLot {
     private _vehiclesByRegNo: Map<string, Vehicle> = new Map();
     private _vehiclesByColor: Map<Color, Set<Vehicle>> = new Map();
 
+    /**
+     * Creates a new parking lot with optional initial capacity
+     */
     constructor(capacity?: number) {
         this.capacity = capacity || 0;
         this._availableSlotsHeap = new MinHeap();
@@ -29,6 +36,9 @@ export class ParkingLot {
         }
     }
 
+    /**
+     * Initializes parking slots with given capacity
+     */
     private _initializeSlots(capacity: number) {
         for (let i = 1; i <= capacity; i++) {
             this._slots.push(new ParkingSlot(i));
@@ -36,14 +46,23 @@ export class ParkingLot {
         }
     }
 
+    /**
+     * Returns total number of slots in the parking lot
+     */
     public getTotalSlots(): number {
         return this.capacity;
     }
 
+    /**
+     * Returns all parking slots
+     */
     public getAllSlots() {
         return this._slots;
     }
 
+    /**
+     * Gets a parking slot by its number
+     */
     public getSlotByNumber(slotNumber: number): ParkingSlot | null {
         if (slotNumber < 1 || slotNumber > this.capacity) {
             return null;
@@ -51,6 +70,9 @@ export class ParkingLot {
         return this._slots[slotNumber - 1] || null;
     }
 
+    /**
+     * Expands parking lot capacity by adding new slots
+     */
     public expand(additionalSlots: number) {
         this.capacity = this.capacity + additionalSlots;
         const currentSize = this._slots.length;
@@ -61,6 +83,9 @@ export class ParkingLot {
         }
     }
 
+    /**
+     * Parks a vehicle in the next available slot
+     */
     public park(vehicle: Vehicle, nextAvailableSlot: ParkingSlot): ParkingSlot | null {
         if (!vehicle.registrationNumber || !vehicle.color) {
             throw new Error("Vehicle registration number and color are required");
@@ -76,6 +101,9 @@ export class ParkingLot {
         return nextAvailableSlot;
     }
 
+    /**
+     * Updates internal maps tracking vehicles
+     */
     public updateVehicleMaps(vehicle: Vehicle, slot: ParkingSlot): void {
         // Update registration number map
         this._vehiclesByRegNo.set(vehicle.registrationNumber, vehicle);
@@ -87,6 +115,9 @@ export class ParkingLot {
         this._vehiclesByColor.get(vehicle.color)!.add(vehicle);
     }
 
+    /**
+     * Removes a vehicle from a parking slot
+     */
     public leaveBySlot(slot: ParkingSlot): ParkingSlot {
         const parkingSlot = this._slots[slot.slotNumber - 1];
         if (!parkingSlot || !parkingSlot.isOccupied) {
@@ -111,31 +142,49 @@ export class ParkingLot {
         return parkingSlot;
     }
 
+    /**
+     * Returns all available parking slots
+     */
     public getAvailableSlots(): ParkingSlot[] {
         return this._slots.filter(s => !s.isOccupied);
     }
 
+    /**
+     * Returns the next available parking slot
+     */
     public getAvailableSlot(): ParkingSlot | null {
         const minSlotNumber = this._availableSlotsHeap.peek();
         return minSlotNumber != null ? this.getSlotByNumber(minSlotNumber) : null;
     }
 
+    /**
+     * Returns all occupied parking slots
+     */
     public getOccupiedSlots(): ParkingSlot[] {
         return this._slots.filter(s => s.isOccupied);
     }
 
+    /**
+     * Finds a parking slot by vehicle registration number
+     */
     public getSlotByRegNo(regNo: string): ParkingSlot | null {
         const vehicle = this._vehiclesByRegNo.get(regNo);
         if (!vehicle) return null;
         return this._slots.find(s => s.vehicle === vehicle) ?? null;
     }
 
+    /**
+     * Gets all parking slots with vehicles of a specific color
+     */
     public getSlotsByColor(color: Color): ParkingSlot[] | null {
         const vehicles = this._vehiclesByColor.get(color);
         if (!vehicles || vehicles.size === 0) return null;
         return this._slots.filter(s => vehicles.has(s.vehicle!));
     }
 
+    /**
+     * Gets all vehicles of a specific color
+     */
     public getVehiclesByColor(color: Color): Vehicle[] | null {
         const vehicles = this._vehiclesByColor.get(color);
         return vehicles ? Array.from(vehicles) : null;

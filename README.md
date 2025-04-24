@@ -20,12 +20,18 @@ This project follows Clean Architecture principles with clear separation of conc
   - `FreeParkingSlotUseCase`
   - `ExpandParkingLotUseCase`
   - `GetOccupiedSlotsUseCase`
+  - `GetAvailableSlotsUseCase`
+  - `FindVehicleByRegistrationUseCase`
+  - `FindVehiclesByColorUseCase`
+  - `GetParkingLotStatusUseCase`
+  - `GetParkingSlotDetailsUseCase`
+  - `ValidateParkingLotCapacityUseCase`
+  - `CheckVehicleRegistrationUseCase`
 
 ### 3. Infrastructure Layer (`src/infra/`)
 - Implements repository interfaces
 - Handles data persistence using efficient data structures
 - Contains concrete implementations of repositories
-- Implements optimized vehicle tracking system
 
 ### 4. Presentation Layer (`src/presentation/`)
 - Handles HTTP requests and responses
@@ -34,14 +40,7 @@ This project follows Clean Architecture principles with clear separation of conc
 
 ## Best Practices Implemented
 
-1. **SOLID Principles**
-   - Single Responsibility Principle: Each class has a single responsibility
-   - Open/Closed Principle: System is open for extension through interfaces
-   - Liskov Substitution Principle: Proper inheritance and interface implementation
-   - Interface Segregation: Clean repository interfaces
-   - Dependency Inversion: Dependencies are injected through constructors
-
-2. **Clean Code Practices**
+1. **Clean Code Practices**
    - Meaningful naming conventions
    - Small, focused classes and methods
    - Clear separation of concerns
@@ -69,11 +68,11 @@ The system implements several optimized data structures for efficient operations
    - Parking a vehicle: O(log n) for heap operations
    - Freeing a slot: O(log n) for heap operations
    - Vehicle lookup by registration: O(1) using Map
-   - Color-based vehicle search: O(n) with optimized array traversal
+   - Color-based vehicle search: O(1) using Map
 
 3. **Query Operations**
-   - Finding slot by registration number: O(1) using Map
-   - Finding slots by color: O(n) with optimized array traversal
+   - Finding slot by registration number: O(n)
+   - Finding slots by color: O(n)
    - Getting all occupied slots: O(1) using array
    - Getting all available slots: O(1) using heap
 
@@ -86,8 +85,6 @@ The system implements several optimized data structures for efficient operations
 1. **Vehicle Management**
    - Each vehicle must have a unique registration number
    - Vehicles must have a color
-   - Only cars are supported (can be extended for other vehicle types)
-   - Vehicle tracking uses optimized Map and Array combination
 
 2. **Parking Rules**
    - First come, first served basis
@@ -103,3 +100,49 @@ The system implements several optimized data structures for efficient operations
    - Node.js runtime environment
    - TypeScript for type safety
    - NestJS framework for API implementation
+
+## Installation and Running Instructions
+
+1. **Prerequisites**
+   - Node.js (latest LTS version recommended)
+   - npm (comes with Node.js)
+
+2. **Installation**
+   ```bash
+   # Clone the repository
+   git clone <repository-url>
+   cd parking-lot
+
+   # Install dependencies
+   npm install
+   ```
+
+3. **Running the Application**
+   ```bash
+   # Development mode with hot-reload
+   npm run start:dev
+
+   # Production mode
+   npm run start:prod
+
+   # Debug mode
+   npm run start:debug
+   ```
+
+4. **Testing**
+   ```bash
+   # Run unit tests
+   npm test
+   ```
+
+5. **Other Available Commands**
+   ```bash
+   # Build the application
+   npm run build
+
+   # Format code
+   npm run format
+
+   # Lint code
+   npm run lint
+   ```

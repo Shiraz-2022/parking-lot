@@ -64,8 +64,6 @@ describe('AllocateParkingSlotUseCase', () => {
 
         // Act
         const result = await useCase.execute(dto);
-
-        // Assert
         expect(result).toBeNull();
         expect(mockRepository.findById).toHaveBeenCalledWith(parkingLotId, true);
         expect(mockRepository.update).not.toHaveBeenCalled();

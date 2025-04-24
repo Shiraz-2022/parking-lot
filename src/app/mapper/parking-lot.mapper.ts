@@ -3,7 +3,14 @@ import { ParkingLot } from '../../domain/entities/parking-lot.entity';
 import { ParkingSlot } from '../../domain/entities/parking-slot.entity';
 import { Car } from '../../domain/entities/car.entity';
 
+/**
+ * Mapper class responsible for converting raw data into ParkingLot entities
+ * and handling the proper initialization of parking slots and vehicles.
+ */
 export class ParkingLotMapper {
+    /**
+     * Converts raw data into a ParkingLot entity with properly initialized slots and vehicles.
+     */
     static toEntity(raw: any): ParkingLot {
         const parkingLot = plainToInstance(ParkingLot, raw, {
             enableImplicitConversion: true,
@@ -11,7 +18,10 @@ export class ParkingLotMapper {
             exposeUnsetFields: false,
         });
 
-        // Ensure slots are properly initialized
+        /**
+         * Ensure slots are properly initialized
+         */
+
         if (parkingLot.getAllSlots) {
             const slots = parkingLot.getAllSlots();
             slots.forEach(slot => {
@@ -21,13 +31,19 @@ export class ParkingLotMapper {
                         excludeExtraneousValues: true,
                         exposeUnsetFields: false,
                     });
-                    // Create a new slot with the vehicle instead of using park
+                    /**
+                     * Create a new slot with the vehicle instead of using park
+                     */
                     const newSlot = new ParkingSlot(slot.slotNumber, vehicle);
-                    // Replace the slot in the array
+                    /**
+                     * Replace the slot in the array
+                     */
                     const index = slots.indexOf(slot);
                     if (index !== -1) {
                         slots[index] = newSlot;
-                        // Update the vehicle maps
+                        /**
+                         * Update the vehicle maps
+                         */
                         parkingLot.updateVehicleMaps(vehicle, newSlot);
                     }
                 }

@@ -1,3 +1,7 @@
+/**
+ * Module for parking lot functionality
+ * Configures dependencies and use cases for parking lot operations
+ */
 import {Module} from "@nestjs/common";
 import {ParkingLotController} from "./parking-lot.controller";
 import {ParkingLotService} from "./parking-lot.service";

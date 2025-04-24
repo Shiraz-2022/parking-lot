@@ -4,9 +4,18 @@ import { Car } from "../../domain/entities/car.entity";
 import type { ParkingSlot } from "../../domain/entities/parking-slot.entity";
 import { ParkingLotMapper } from "../mapper/parking-lot.mapper";
 
+/**
+ * Use case for allocating a parking slot to a car in a parking lot
+ */
 export class AllocateParkingSlotUseCase {
+    /**
+     * Creates an instance of AllocateParkingSlotUseCase
+     */
     constructor(private parkingLotRepository: ParkingLotRepository) {}
 
+    /**
+     * Executes the parking slot allocation process
+     */
     async execute(request: AllocateParkingSlotDto): Promise<ParkingSlot | null> {
         const raw = this.parkingLotRepository.findById(request.parkingLotId, true);
         const parkingLot = ParkingLotMapper.toEntity(raw);
@@ -18,7 +27,6 @@ export class AllocateParkingSlotUseCase {
 
         const slot = parkingLot.park(car, nextAvailableSlot);
 
-        // Update the parking lot in the repository
         this.parkingLotRepository.removeFromHeap();
         this.parkingLotRepository.update(request.parkingLotId, parkingLot);
 

@@ -7,8 +7,16 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+/**
+ * Global exception filter that handles all HTTP exceptions
+ * Formats error responses in a consistent way
+ */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  /**
+   * Catches and formats HTTP exceptions
+   * Returns a standardized error response
+   */
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
