@@ -146,3 +146,23 @@ The system implements several optimized data structures for efficient operations
    # Lint code
    npm run lint
    ```
+
+## Docker and Deployment
+
+### Docker Setup
+The project includes a Dockerfile for containerization. To build and run the application using Docker:
+
+```bash
+# Build the Docker image
+docker build -t parking-lot .
+
+# Run the container
+docker run -p 3000:3000 parking-lot
+```
+
+### Automated Deployment
+The project is configured with automated deployment on push to the main branch. The deployment pipeline:
+1. Builds the Docker image
+3. Deploys the application to the production environment
+
+This ensures consistent and reliable deployments with minimal manual intervention.
