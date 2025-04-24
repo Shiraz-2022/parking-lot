@@ -1,4 +1,4 @@
-import type {Color} from "../enums/color.enum.ts";
+import type {Color} from "../enums/color.enum";
 
 export abstract class Vehicle {
     constructor(
@@ -8,7 +8,6 @@ export abstract class Vehicle {
         if(!registrationNumber || !color){
             throw new Error("Vehicle registration number and color are required");
         }
-
     }
 
     abstract get type(): string;

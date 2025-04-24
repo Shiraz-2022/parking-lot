@@ -1,11 +1,13 @@
 import { ParkingSlot } from './parking-slot.entity';
 import { Vehicle } from './vehicle.entity';
 import type { Color } from "../enums/color.enum.ts";
-import { MinHeap } from '../shared/min-heap'; // 👈 Import your heap class
+import { MinHeap } from '../shared/min-heap';
+import {Type} from "class-transformer";
 
 export class ParkingLot {
+    @Type(()=> ParkingSlot)
     private _slots: ParkingSlot[] = [];
-    private _availableSlotsHeap: MinHeap; // 👈 MinHeap to track available slots
+    private _availableSlotsHeap: MinHeap;
 
     constructor(private capacity: number) {
         this._availableSlotsHeap = new MinHeap();
@@ -28,11 +30,14 @@ export class ParkingLot {
     }
 
     public getSlotByNumber(slotNumber: number): ParkingSlot | null {
+        console.log("getSlotByNumber", this._slots);
+        console.log("getSlotByNumber", slotNumber);
         const slot = this._slots[slotNumber];
         return slot ?? null;
     }
 
     public expand(additionalSlots: number) {
+        this.capacity = this.capacity+additionalSlots;
         const currentSize = this._slots.length;
         for (let i = 1; i <= additionalSlots; i++) {
             const newSlotNumber = currentSize + i;
@@ -41,23 +46,27 @@ export class ParkingLot {
         }
     }
 
-    public park(vehicle: Vehicle): ParkingSlot | null {
-        const nextAvailable = this._availableSlotsHeap.extractMin();
-        if (nextAvailable == null) return null;
+    public park(vehicle: Vehicle, nextAvailableSlot): ParkingSlot | null {
+        if (!vehicle.registrationNumber || !vehicle.color) {
+            throw new Error("Vehicle registration number and color are required");
+        }
 
-        const slot = this.getSlotByNumber(nextAvailable);
-        if (!slot) throw new Error("Slot not found");
+        nextAvailableSlot.park(vehicle);
 
-        slot.park(vehicle);
-        return slot;
+        this._slots[nextAvailableSlot.slotNumber] = nextAvailableSlot;
+
+        return nextAvailableSlot;
     }
 
-    public leaveBySlot(slot: ParkingSlot): ParkingSlot | null {
+    public leaveBySlot(slot: ParkingSlot): ParkingSlot {
         const parkingSlot = this._slots[slot.slotNumber];
-        if (!parkingSlot || !parkingSlot.isOccupied) return null;
+        if (!parkingSlot || !parkingSlot.isOccupied) {
+            throw new Error("Parking slot is already empty");
+        }
 
         parkingSlot.clear();
-        this._availableSlotsHeap.insert(parkingSlot.slotNumber); // Re-add to heap
+
+        this._slots[parkingSlot.slotNumber] = parkingSlot;
 
         return parkingSlot;
     }
@@ -72,6 +81,7 @@ export class ParkingLot {
     }
 
     public getOccupiedSlots(): ParkingSlot[] {
+        console.log("Occupied Slots:", this._slots);
         return this._slots.filter(s => s.isOccupied);
     }
 

@@ -1,6 +1,8 @@
 import { Vehicle } from './vehicle.entity';
+import { Type } from 'class-transformer';
 
 export class ParkingSlot {
+
     constructor(
         public readonly slotNumber: number,
         private _vehicle: Vehicle | null = null,
@@ -14,6 +16,7 @@ export class ParkingSlot {
         return this._vehicle !== null;
     }
 
+    @Type(() => Vehicle)
     public get vehicle(): Vehicle | null {
         return this._vehicle;
     }

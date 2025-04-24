@@ -23,26 +23,26 @@ export class InMemoryBaseRepository<T> implements HeapRepository<T> {
     }
 
     create(data: Partial<T>): T {
-        const id = this.generateId();
-        const item = { ...data, id } as T;
-        this.collection.map.set(id, item);
+        const _id = this.generateId();
+        const item = { ...data, _id } as T;
+        this.collection.map.set(_id, item);
         this.collection.array.push(item);
         return item;
     }
 
-    update(id: string, data: Partial<T>): T | null {
-        const existing = this.collection.map.get(id);
+    update(_id: string, data: Partial<T>): T | null {
+        const existing = this.collection.map.get(_id);
         if (!existing) return null;
         const updated = { ...existing, ...data };
-        this.collection.map.set(id, updated);
-        const index = this.collection.array.findIndex(i => (i as any).id === id);
+        this.collection.map.set(_id, updated);
+        const index = this.collection.array.findIndex(i => (i as any)._id === _id);
         if (index !== -1) this.collection.array[index] = updated;
         return updated;
     }
 
-    delete(id: string): void {
-        this.collection.map.delete(id);
-        this.collection.array = this.collection.array.filter(i => (i as any).id !== id);
+    delete(_id: string): void {
+        this.collection.map.delete(_id);
+        this.collection.array = this.collection.array.filter(i => (i as any)._id !== _id);
     }
 
     addToHeap(item: any): void {

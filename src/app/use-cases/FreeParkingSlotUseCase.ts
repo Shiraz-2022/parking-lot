@@ -1,12 +1,15 @@
 import type {ParkingLotRepository} from "../../domain/repositories/parking-lot/parking-lot.repository.ts";
 import type {FreeParkingSlotDto} from "../dto/FreeParkingSlotDto.ts";
 import type {ParkingSlot} from "../../domain/entities/parking-slot.entity.ts";
+import {ParkingLotMapper} from "../mapper/parking-lot.mapper";
 
 export class FreeParkingSlotUseCase {
     constructor(private parkingLotRepository: ParkingLotRepository) {}
 
-    async execute(request: FreeParkingSlotDto): Promise<ParkingSlot | null> {
-        const parkingLot = this.parkingLotRepository.findById(request.parkingLotId, true);
+    async execute(request: FreeParkingSlotDto): Promise<ParkingSlot> {
+        const raw = this.parkingLotRepository.findById(request.parkingLotId, true);
+
+        const parkingLot = ParkingLotMapper.toEntity(raw);
 
         if (!request.slotNumber && !request.regNo) {
             throw new Error("Either slot number or vehicle registration number must be provided");
@@ -26,6 +29,10 @@ export class FreeParkingSlotUseCase {
             }
         }
 
-        return parkingLot!.leaveBySlot(slot!);
+        const freeSlot = parkingLot!.leaveBySlot(slot!);
+
+        this.parkingLotRepository.addToHeap(freeSlot);
+
+        return freeSlot;
     }
 }

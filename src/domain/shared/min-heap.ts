@@ -11,6 +11,7 @@ export class MinHeap {
     }
 
     extractMin(): any {
+        console.log("extractMin", this.heap);
         if (this.heap.length === 0) return null;
 
         const minItem = this.heap[0];

@@ -62,7 +62,12 @@ export class ParkingLotController {
         try {
             const parkingSlot = await this.allocateParkingSlotUseCase.execute(dto);
 
-            return { message: 'Parking slot allocated', data: parkingSlot };
+            if(parkingSlot){
+                return { message: 'Parking slot allocated', data: parkingSlot };
+            }
+            else {
+                return { message: 'No available slots', data: parkingSlot };
+            }
         }
         catch (error){
             console.error("Error allocating parking slot:", error);

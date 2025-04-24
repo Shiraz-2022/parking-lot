@@ -9,6 +9,7 @@ export class CreateParkingLotUseCase {
 
     async execute(request: CreateParkingLotDto): Promise<ParkingLot> {
         const parkingLot = new ParkingLot(request.capacity);
-        return this.parkingLotRepository.create(parkingLot);  // Use the repository to create the parking lot
+
+        return this.parkingLotRepository.createParkingLot(parkingLot);
     }
 }
