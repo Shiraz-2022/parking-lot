@@ -18,6 +18,6 @@ export class ExpandParkingLotUseCase {
 
         parkingLot.expand(request.slotsCount);
 
-        return this.parkingLotRepository.update(request.parkingLotId, parkingLot!);
+        return this.parkingLotRepository.updateParkingLot(request.parkingLotId, parkingLot, request.slotsCount);
     }
 }

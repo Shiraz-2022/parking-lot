@@ -30,8 +30,6 @@ export class ParkingLot {
     }
 
     public getSlotByNumber(slotNumber: number): ParkingSlot | null {
-        console.log("getSlotByNumber", this._slots);
-        console.log("getSlotByNumber", slotNumber);
         const slot = this._slots[slotNumber];
         return slot ?? null;
     }
@@ -42,7 +40,7 @@ export class ParkingLot {
         for (let i = 1; i <= additionalSlots; i++) {
             const newSlotNumber = currentSize + i;
             this._slots.push(new ParkingSlot(newSlotNumber));
-            this._availableSlotsHeap.insert(newSlotNumber); // Add to heap
+            this._availableSlotsHeap.insert(newSlotNumber);
         }
     }
 
@@ -54,6 +52,11 @@ export class ParkingLot {
         nextAvailableSlot.park(vehicle);
 
         this._slots[nextAvailableSlot.slotNumber] = nextAvailableSlot;
+
+        // Remove the slot number from the heap
+        this._availableSlotsHeap.extractMin();
+
+        console.log("heap", this._availableSlotsHeap);
 
         return nextAvailableSlot;
     }
@@ -67,6 +70,9 @@ export class ParkingLot {
         parkingSlot.clear();
 
         this._slots[parkingSlot.slotNumber] = parkingSlot;
+
+        // Add the slot number back to the heap
+        this._availableSlotsHeap.insert(parkingSlot.slotNumber);
 
         return parkingSlot;
     }

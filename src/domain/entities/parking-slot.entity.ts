@@ -7,8 +7,8 @@ export class ParkingSlot {
         public readonly slotNumber: number,
         private _vehicle: Vehicle | null = null,
     ) {
-        if (slotNumber <= 0) {
-            throw new Error('Slot number must be greater than 0');
+        if (slotNumber < 0) {
+            throw new Error('Slot number must be greater than or equal 0');
         }
     }
 

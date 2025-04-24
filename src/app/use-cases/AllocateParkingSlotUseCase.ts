@@ -1,8 +1,8 @@
-import type {ParkingLotRepository} from "../../domain/repositories/parking-lot/parking-lot.repository";
-import type {AllocateParkingSlotDto} from "../dto/AllocateParkingSlotDto";
-import {Car} from "../../domain/entities/car.entity";
-import type {ParkingSlot} from "../../domain/entities/parking-slot.entity";
-import {ParkingLotMapper} from "../mapper/parking-lot.mapper";
+import type { ParkingLotRepository } from "../../domain/repositories/parking-lot/parking-lot.repository";
+import type { AllocateParkingSlotDto } from "../dto/AllocateParkingSlotDto";
+import { Car } from "../../domain/entities/car.entity";
+import type { ParkingSlot } from "../../domain/entities/parking-slot.entity";
+import { ParkingLotMapper } from "../mapper/parking-lot.mapper";
 
 export class AllocateParkingSlotUseCase {
     constructor(private parkingLotRepository: ParkingLotRepository) {}
@@ -14,19 +14,19 @@ export class AllocateParkingSlotUseCase {
 
         const car = new Car(request.regNo, request.color);
 
-        const nextAvailableSlot : ParkingSlot = this.parkingLotRepository.peekMin();
+        const nextAvailableSlot = parkingLot.getAvailableSlot();
 
         console.log("nextAvailable", nextAvailableSlot);
 
         if (nextAvailableSlot == null) return null;
 
-        const slot = parkingLot!.park(car, nextAvailableSlot);
+        const slot = parkingLot.park(car, nextAvailableSlot);
 
+        // Update the parking lot in the repository
         this.parkingLotRepository.removeFromHeap();
+        this.parkingLotRepository.update(request.parkingLotId, parkingLot);
 
-        const val = this.parkingLotRepository.update(request.parkingLotId, parkingLot);
-
-        console.log("val", parkingLot);
+        console.log("Updated heap", parkingLot.getAvailableSlots());
 
         return slot;
     }

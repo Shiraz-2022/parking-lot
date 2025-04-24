@@ -1,65 +1,76 @@
 export class MinHeap {
-    private heap: any[];
+    private heap: number[];
 
     constructor() {
         this.heap = [];
     }
 
-    insert(item: any): void {
+    insert(item: number): void {
         this.heap.push(item);
         this.heapifyUp();
     }
 
-    extractMin(): any {
-        console.log("extractMin", this.heap);
+    extractMin(): number | null {
         if (this.heap.length === 0) return null;
 
         const minItem = this.heap[0];
-        const lastItem = this.heap.pop();
 
-        if (this.heap.length > 0) {
-            this.heap[0] = lastItem!;
-            this.heapifyDown();
+        if (this.heap.length === 1) {
+            this.heap.pop();
+            return minItem;
         }
+
+        this.heap[0] = this.heap.pop()!;
+        this.heapifyDown(0);
 
         return minItem;
     }
 
-    peek(): any {
-        if (this.heap.length === 0) return null;
-        return this.heap[0];
+    peek(): number | null {
+        return this.heap.length === 0 ? null : this.heap[0];
+    }
+
+    size(): number {
+        return this.heap.length;
     }
 
     private heapifyUp(): void {
         let index = this.heap.length - 1;
         while (index > 0) {
             const parentIndex = Math.floor((index - 1) / 2);
-            if (this.heap[parentIndex].availability <= this.heap[index].availability) break;
-
+            if (this.heap[parentIndex] <= this.heap[index]) break;
             [this.heap[parentIndex], this.heap[index]] = [this.heap[index], this.heap[parentIndex]];
             index = parentIndex;
         }
     }
 
-    private heapifyDown(): void {
-        let index = 0;
-        while (index < this.heap.length) {
-            const leftChildIndex = 2 * index + 1;
-            const rightChildIndex = 2 * index + 2;
+    private heapifyDown(index: number): void {
+        const length = this.heap.length;
+        while (true) {
             let smallest = index;
+            const left = 2 * index + 1;
+            const right = 2 * index + 2;
 
-            if (leftChildIndex < this.heap.length && this.heap[leftChildIndex].availability < this.heap[smallest].availability) {
-                smallest = leftChildIndex;
-            }
-
-            if (rightChildIndex < this.heap.length && this.heap[rightChildIndex].availability < this.heap[smallest].availability) {
-                smallest = rightChildIndex;
-            }
-
+            if (left < length && this.heap[left] < this.heap[smallest]) smallest = left;
+            if (right < length && this.heap[right] < this.heap[smallest]) smallest = right;
             if (smallest === index) break;
 
             [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
             index = smallest;
         }
+    }
+
+    toString(): string {
+        return this.heap.toString();
+    }
+
+    isValid(): boolean {
+        for (let i = 0; i < this.heap.length; i++) {
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+            if (left < this.heap.length && this.heap[i] > this.heap[left]) return false;
+            if (right < this.heap.length && this.heap[i] > this.heap[right]) return false;
+        }
+        return true;
     }
 }

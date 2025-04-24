@@ -16,7 +16,7 @@ COPY  . .
 # Build the TypeScript app
 RUN npm run build
 
-# Expose the port your app uses (adjust if needed)
+# Expose the port your app uses
 EXPOSE 3000
 
 # Run the built app
