@@ -166,3 +166,169 @@ The project is configured with automated deployment on push to the main branch. 
 3. Deploys the application to the production environment
 
 This ensures consistent and reliable deployments with minimal manual intervention.
+
+## API Documentation
+
+### Base URLs
+```
+Development: http://localhost:3000
+Production: https://parking-lot-production.up.railway.app
+```
+
+### Endpoints
+
+#### 1. Create Parking Lot
+- **POST** `/parking-lot/create`
+- **Description**: Creates a new parking lot with specified capacity
+- **Request Body**:
+  ```json
+  {
+    "capacity": 10
+  }
+  ```
+- **Response**: 201 Created
+  ```json
+  {
+    "_id": "parking-lot-1",
+    "capacity": 10,
+    "_slots": [],
+    "_availableSlotsHeap": {}
+  }
+  ```
+
+#### 2. Park Vehicle
+- **POST** `/parking-lot/allocate`
+- **Description**: Parks a vehicle in the next available slot
+- **Request Body**:
+  ```json
+  {
+    "regNo": "KA-01-HH-1234",
+    "color": "WHITE",
+    "parkingLotId": "parking-lot-1"
+  }
+  ```
+- **Response**: 200 OK
+  ```json
+  {
+    "slotNumber": 1,
+    "vehicle": {
+      "registrationNumber": "KA-01-HH-1234",
+      "color": "WHITE"
+    }
+  }
+  ```
+
+#### 3. Leave Parking
+- **POST** `/parking-lot/free`
+- **Description**: Removes a vehicle from the specified slot
+- **Request Body**:
+  ```json
+  {
+    "parkingLotId": "parking-lot-1",
+    "slotNumber": 1
+  }
+  ```
+  OR
+  ```json
+  {
+    "parkingLotId": "parking-lot-1",
+    "regNo": "KA-01-HH-1234"
+  }
+  ```
+- **Response**: 200 OK
+  ```json
+  {
+    "slotNumber": 1,
+    "vehicle": null
+  }
+  ```
+
+#### 4. Get Occupied Slots
+- **GET** `/parking-lot/slots/occupied`
+- **Description**: Returns all occupied parking slots
+- **Request Body**:
+  ```json
+  {
+    "parkingLotId": "parking-lot-1"
+  }
+  ```
+- **Response**: 200 OK
+  ```json
+  [
+    {
+      "slotNumber": 1,
+      "vehicle": {
+        "registrationNumber": "KA-01-HH-1234",
+        "color": "WHITE"
+      }
+    }
+  ]
+  ```
+
+#### 5. Find Vehicle by Registration
+- **GET** `/parking-lot/slots/vehicle`
+- **Description**: Finds a vehicle by its registration number
+- **Request Body**:
+  ```json
+  {
+    "parkingLotId": "parking-lot-1",
+    "regNo": "KA-01-HH-1234"
+  }
+  ```
+- **Response**: 200 OK
+  ```json
+  {
+    "slotNumber": 1,
+    "vehicle": {
+      "registrationNumber": "KA-01-HH-1234",
+      "color": "WHITE"
+    }
+  }
+  ```
+
+#### 6. Find Vehicles by Color
+- **GET** `/parking-lot/slots/color`
+- **Description**: Finds all vehicles of a specific color
+- **Request Body**:
+  ```json
+  {
+    "parkingLotId": "parking-lot-1",
+    "color": "WHITE"
+  }
+  ```
+- **Response**: 200 OK
+  ```json
+  [
+    {
+      "slotNumber": 1,
+      "vehicle": {
+        "registrationNumber": "KA-01-HH-1234",
+        "color": "WHITE"
+      }
+    }
+  ]
+  ```
+
+#### 7. Expand Parking Lot
+- **PATCH** `/parking-lot/expand`
+- **Description**: Adds more slots to the parking lot
+- **Request Body**:
+  ```json
+  {
+    "parkingLotId": "parking-lot-1",
+    "slotsCount": 5
+  }
+  ```
+- **Response**: 200 OK
+  ```json
+  {
+    "_id": "parking-lot-1",
+    "capacity": 15,
+    "_slots": [],
+    "_availableSlotsHeap": {}
+  }
+  ```
+
+### Postman Collection
+You can access the complete Postman collection for testing these APIs at:
+[Parking Lot API Collection](https://nuddl-dev.postman.co/workspace/nuddl-dev~8377bd3a-c720-41bf-8e4c-90e90a34e591/collection/25657319-28d1eb01-362b-4708-9255-6fcacd6b2502?action=share&creator=25657319)
