@@ -20,13 +20,11 @@ This project follows Clean Architecture principles with clear separation of conc
   - `FreeParkingSlotUseCase`
   - `ExpandParkingLotUseCase`
   - `GetOccupiedSlotsUseCase`
+  - `GetVehiclesByColorUseCase`
   - `GetAvailableSlotsUseCase`
-  - `FindVehicleByRegistrationUseCase`
-  - `FindVehiclesByColorUseCase`
-  - `GetParkingLotStatusUseCase`
-  - `GetParkingSlotDetailsUseCase`
-  - `ValidateParkingLotCapacityUseCase`
-  - `CheckVehicleRegistrationUseCase`
+  - `GetSlotByVehicleUseCase`
+  - `GetSlotsByColorUseCase`
+  - `GetVehiclesByColorUseCase`
 
 ### 3. Infrastructure Layer (`src/infra/`)
 - Implements repository interfaces
