@@ -85,7 +85,6 @@ The system implements several optimized data structures for efficient operations
 3. **System Constraints**
    - In-memory storage with optimized data structures
    - Single parking lot instance (can be extended to multiple lots)
-   - No concurrent parking operations (can be added with proper locking)
 
 4. **Technical Assumptions**
    - Node.js runtime environment
