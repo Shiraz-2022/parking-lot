@@ -36,18 +36,13 @@ This project follows Clean Architecture principles with clear separation of conc
 - Implements controllers and routes
 - Manages API endpoints
 
-## Best Practices Implemented
+## Clean Code Practices
 
-1. **Clean Code Practices**
    - Meaningful naming conventions
    - Small, focused classes and methods
    - Clear separation of concerns
    - Proper error handling
    - Comprehensive unit tests
-
-3. **Design Patterns**
-   - Repository Pattern for data access
-   - DTO Pattern for data transfer
 
 ## Optimized Data Structures and Time Complexity
 
