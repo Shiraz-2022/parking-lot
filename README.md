@@ -47,9 +47,7 @@ This project follows Clean Architecture principles with clear separation of conc
 
 3. **Design Patterns**
    - Repository Pattern for data access
-   - Factory Pattern for entity creation
    - DTO Pattern for data transfer
-   - Mapper Pattern for entity transformations
 
 ## Optimized Data Structures and Time Complexity
 
