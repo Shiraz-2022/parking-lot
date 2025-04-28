@@ -64,8 +64,8 @@ The system implements several optimized data structures for efficient operations
 3. **Query Operations**
    - Finding slot by registration number: O(n)
    - Finding slots by color: O(n)
-   - Getting all occupied slots: O(1) using array
-   - Getting all available slots: O(1) using heap
+   - Getting all occupied slots: O(n)
+   - Getting all available slots: O(n)
 
 4. **Expansion Operations**
    - Adding new slots: O(k) where k is the number of new slots
