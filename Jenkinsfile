@@ -4,9 +4,7 @@ pipeline{
     stages {
         stage('Build docker image') {
             steps {
-                script {
-                    dockerImage = docker.Build("parking-lot-image")
-                }
+               sh 'docker build -t parking-lot:latest .'
             }
         }
     }
